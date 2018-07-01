@@ -5,6 +5,7 @@ import com.google.auto.common.BasicAnnotationProcessor
 import com.google.auto.common.MoreElements
 import com.google.auto.service.AutoService
 import com.google.common.collect.SetMultimap
+import org.codepond.roomprovider.contract.ContractWriter
 import javax.annotation.processing.Processor
 import javax.lang.model.SourceVersion
 import javax.lang.model.element.Element
@@ -26,7 +27,9 @@ class RoomProviderProcessor : BasicAnnotationProcessor() {
             val contracts = elementsByAnnotation[Database::class.java]?.map { element ->
                 DatabaseProcessor(context, MoreElements.asType(element)).process()
             }
-            context.logger.d("Contracts: ${contracts?.toString()}")
+
+            contracts?.forEach { ContractWriter(it, context).write() }
+
             return mutableSetOf()
         }
     }

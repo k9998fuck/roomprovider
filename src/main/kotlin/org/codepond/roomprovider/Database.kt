@@ -4,4 +4,4 @@ import javax.lang.model.element.TypeElement
 
 data class Database(val element: TypeElement,
                     val name: String,
-                    val contents: List<Entity>)
+                    val entities: List<Entity>)

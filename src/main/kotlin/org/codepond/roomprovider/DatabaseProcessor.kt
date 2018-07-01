@@ -36,7 +36,6 @@ class DatabaseProcessor(context: Context,
     private fun processDatabaseName(): String? {
         return element.simpleName?.toString()
                 ?.replace(Regex("(Db|Database)"), "")
-                ?.plus("Contract")
                 ?.capitalize()
     }
 }
