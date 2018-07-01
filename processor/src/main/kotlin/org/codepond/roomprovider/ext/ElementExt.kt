@@ -20,13 +20,9 @@ package org.codepond.roomprovider.ext
 import com.google.auto.common.AnnotationMirrors
 import com.google.auto.common.MoreElements
 import com.google.auto.common.MoreTypes
+import org.codepond.roomprovider.Context
 import javax.annotation.processing.ProcessingEnvironment
-import javax.lang.model.element.AnnotationValue
-import javax.lang.model.element.Element
-import javax.lang.model.element.ElementKind
-import javax.lang.model.element.Modifier
-import javax.lang.model.element.TypeElement
-import javax.lang.model.element.VariableElement
+import javax.lang.model.element.*
 import javax.lang.model.type.TypeKind
 import javax.lang.model.type.TypeMirror
 import javax.lang.model.util.SimpleAnnotationValueVisitor6
@@ -140,3 +136,7 @@ fun AnnotationValue.getAsBoolean(def: Boolean): Boolean {
 fun AnnotationValue.getAsStringList(): List<String> {
     return ANNOTATION_VALUE_STRING_ARR_VISITOR.visit(this)
 }
+
+fun TypeElement.getPackage(context: Context) = context.processingEnv.elementUtils.getPackageOf(this).qualifiedName.toString()
+
+

@@ -11,6 +11,6 @@ interface RedditPostDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(posts: List<RedditPost>)
 
-    @Query("SELECT * FROM posts WHERE subreddit = :subreddit")
+    @Query("SELECT * FROM posts WHERE name = :subreddit")
     fun postsBySubreddit(subreddit: String): Cursor
 }

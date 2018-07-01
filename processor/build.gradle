@@ -8,5 +8,7 @@ dependencies {
     implementation 'com.squareup:javapoet:1.11.1'
     compileOnly "com.google.auto.service:auto-service:1.0-rc2"
     compileOnly deps.room.runtime
+    compileOnly deps.dagger.android
+
     kapt "com.google.auto.service:auto-service:1.0-rc2"
 }

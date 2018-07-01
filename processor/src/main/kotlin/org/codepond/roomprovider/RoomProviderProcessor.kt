@@ -6,10 +6,12 @@ import com.google.auto.service.AutoService
 import com.google.common.collect.SetMultimap
 import org.codepond.roomprovider.contract.ContractWriter
 import org.codepond.roomprovider.contract.DatabaseProcessor
+import org.codepond.roomprovider.provider.ProviderWriter
 import javax.annotation.processing.Processor
 import javax.lang.model.SourceVersion
 import javax.lang.model.element.Element
 
+@Suppress("unused")
 @AutoService(Processor::class)
 class RoomProviderProcessor : BasicAnnotationProcessor() {
     override fun getSupportedSourceVersion(): SourceVersion = SourceVersion.latest()
@@ -20,7 +22,8 @@ class RoomProviderProcessor : BasicAnnotationProcessor() {
 
     class ProcessEntityStep(context: Context) : ContextAwareProcessingStep(context) {
         override fun annotations(): MutableSet<out Class<out Annotation>> {
-            return mutableSetOf(android.arch.persistence.room.Database::class.java)
+            return mutableSetOf(android.arch.persistence.room.Database::class.java,
+                    android.arch.persistence.room.Dao::class.java)
         }
 
         override fun process(elementsByAnnotation: SetMultimap<Class<out Annotation>, Element>): MutableSet<out Element> {
@@ -28,7 +31,10 @@ class RoomProviderProcessor : BasicAnnotationProcessor() {
                 DatabaseProcessor(context, MoreElements.asType(element)).process()
             }
 
-            contracts?.forEach { ContractWriter(it, context).write() }
+            contracts?.forEach {
+                val contract = ContractWriter(it, context).write()
+                ProviderWriter(it, contract, context).write()
+            }
 
             return mutableSetOf()
         }
