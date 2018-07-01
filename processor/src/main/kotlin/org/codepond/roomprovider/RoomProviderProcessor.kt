@@ -1,6 +1,5 @@
 package org.codepond.roomprovider
 
-import android.arch.persistence.room.Database
 import com.google.auto.common.BasicAnnotationProcessor
 import com.google.auto.common.MoreElements
 import com.google.auto.service.AutoService
@@ -21,11 +20,11 @@ class RoomProviderProcessor : BasicAnnotationProcessor() {
 
     class ProcessEntityStep(context: Context) : ContextAwareProcessingStep(context) {
         override fun annotations(): MutableSet<out Class<out Annotation>> {
-            return mutableSetOf(Database::class.java)
+            return mutableSetOf(android.arch.persistence.room.Database::class.java)
         }
 
         override fun process(elementsByAnnotation: SetMultimap<Class<out Annotation>, Element>): MutableSet<out Element> {
-            val contracts = elementsByAnnotation[Database::class.java]?.map { element ->
+            val contracts = elementsByAnnotation[android.arch.persistence.room.Database::class.java]?.map { element ->
                 DatabaseProcessor(context, MoreElements.asType(element)).process()
             }
 

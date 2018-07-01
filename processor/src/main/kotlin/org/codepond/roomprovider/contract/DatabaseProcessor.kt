@@ -1,6 +1,5 @@
 package org.codepond.roomprovider.contract
 
-import android.arch.persistence.room.Database
 import com.google.auto.common.AnnotationMirrors
 import com.google.auto.common.MoreElements
 import com.google.auto.common.MoreTypes
@@ -13,9 +12,9 @@ import javax.lang.model.element.TypeElement
 class DatabaseProcessor(context: Context,
                         element: TypeElement
 ) : ContextAwareProcessor(context, element) {
-    fun process(): org.codepond.roomprovider.contract.Database {
+    fun process(): Database {
         val dbAnnotation = MoreElements
-                .getAnnotationMirror(element, Database::class.java)
+                .getAnnotationMirror(element, android.arch.persistence.room.Database::class.java)
                 .orNull()
         val entities = processEntities(dbAnnotation)
         val databaseName = processDatabaseName()
