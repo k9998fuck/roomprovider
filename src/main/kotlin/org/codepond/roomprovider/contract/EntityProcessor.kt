@@ -1,10 +1,12 @@
-package org.codepond.roomprovider
+package org.codepond.roomprovider.contract
 
 import android.arch.persistence.room.ColumnInfo
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.Ignore
 import com.google.auto.common.AnnotationMirrors
 import com.google.auto.common.MoreElements
+import org.codepond.roomprovider.Context
+import org.codepond.roomprovider.ContextAwareProcessor
 import org.codepond.roomprovider.ext.getAllFieldsIncludingPrivateSupers
 import org.codepond.roomprovider.ext.hasAnnotation
 import org.codepond.roomprovider.ext.hasAnyOf
@@ -17,7 +19,7 @@ import javax.lang.model.element.Modifier.TRANSIENT
 class EntityProcessor(context: Context,
                       entityElement: TypeElement
 ) : ContextAwareProcessor(context, entityElement) {
-    fun process(): org.codepond.roomprovider.Entity {
+    fun process(): org.codepond.roomprovider.contract.Entity {
         context.logger.d(element, "Found entity")
         val annotation = MoreElements.getAnnotationMirror(element, Entity::class.java).orNull()
         val tableName = extractAnnotationValue(element, annotation, "tableName")

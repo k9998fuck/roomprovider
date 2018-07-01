@@ -6,6 +6,7 @@ import com.google.auto.common.MoreElements
 import com.google.auto.service.AutoService
 import com.google.common.collect.SetMultimap
 import org.codepond.roomprovider.contract.ContractWriter
+import org.codepond.roomprovider.contract.DatabaseProcessor
 import javax.annotation.processing.Processor
 import javax.lang.model.SourceVersion
 import javax.lang.model.element.Element

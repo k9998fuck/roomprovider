@@ -1,4 +1,4 @@
-package org.codepond.roomprovider
+package org.codepond.roomprovider.contract
 
 import javax.lang.model.element.TypeElement
 

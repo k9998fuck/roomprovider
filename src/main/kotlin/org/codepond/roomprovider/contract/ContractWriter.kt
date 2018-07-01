@@ -5,8 +5,6 @@ import com.squareup.javapoet.FieldSpec
 import com.squareup.javapoet.JavaFile
 import com.squareup.javapoet.TypeSpec
 import org.codepond.roomprovider.Context
-import org.codepond.roomprovider.Database
-import org.codepond.roomprovider.Entity
 import org.codepond.roomprovider.ext.AndroidTypeNames
 import javax.lang.model.element.Modifier
 
