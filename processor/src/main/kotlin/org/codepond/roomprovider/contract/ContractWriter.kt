@@ -18,7 +18,7 @@ class ContractWriter(private val database: Database,
                 .build()
 
         val baseContentUri = FieldSpec.builder(AndroidTypeNames.URI, "BASE_CONTENT_URI", *publicStaticFinalModifier)
-                .initializer("Uri.parse(\"content://\" + CONTENT_AUTHORITY)")
+                .initializer("new Uri.Builder().scheme(\"content\").encodedAuthority(\$N).build()", contentAuthority)
                 .build()
 
         val contractName = "${database.name.capitalize()}Contract"
