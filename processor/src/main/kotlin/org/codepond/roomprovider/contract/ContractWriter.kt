@@ -58,8 +58,8 @@ class ContractWriter(private val database: Database,
                     .initializer("\$T.CURSOR_ITEM_BASE_TYPE + \"/vnd.\" + CONTENT_AUTHORITY + \".\$L\"", AndroidTypeNames.CONTENT_RESOLVER, entity.name)
                     .build())
 
-            entity.columns.forEach {
-                val fieldName = CaseFormat.UPPER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, it)
+            entity.fields.forEach {
+                val fieldName = CaseFormat.UPPER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, it.name)
                 columns.add(fieldName)
                 addField(FieldSpec.builder(String::class.java, fieldName, *publicStaticFinalModifier)
                         .initializer("\$S", it)

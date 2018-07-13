@@ -6,6 +6,7 @@ import com.google.auto.service.AutoService
 import com.google.common.collect.SetMultimap
 import org.codepond.roomprovider.contract.ContractWriter
 import org.codepond.roomprovider.contract.DatabaseProcessor
+import org.codepond.roomprovider.contract.ExtensionWriter
 import org.codepond.roomprovider.provider.ProviderWriter
 import javax.annotation.processing.Processor
 import javax.lang.model.SourceVersion
@@ -20,6 +21,10 @@ class RoomProviderProcessor : BasicAnnotationProcessor() {
         return mutableListOf(ProcessEntityStep(Context(processingEnv)))
     }
 
+    override fun getSupportedOptions(): MutableSet<String> {
+        return mutableSetOf("kapt.kotlin.generated")
+    }
+
     class ProcessEntityStep(context: Context) : ContextAwareProcessingStep(context) {
         override fun annotations(): MutableSet<out Class<out Annotation>> {
             return mutableSetOf(android.arch.persistence.room.Database::class.java,
@@ -27,12 +32,13 @@ class RoomProviderProcessor : BasicAnnotationProcessor() {
         }
 
         override fun process(elementsByAnnotation: SetMultimap<Class<out Annotation>, Element>): MutableSet<out Element> {
-            val contracts = elementsByAnnotation[android.arch.persistence.room.Database::class.java]?.map { element ->
+            val databases = elementsByAnnotation[android.arch.persistence.room.Database::class.java]?.map { element ->
                 DatabaseProcessor(context, MoreElements.asType(element)).process()
             }
 
-            contracts?.forEach {
+            databases?.forEach {
                 val contract = ContractWriter(it, context).write()
+                ExtensionWriter(it, context).write()
                 ProviderWriter(it, contract, context).write()
             }
 

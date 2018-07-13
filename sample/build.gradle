@@ -13,6 +13,9 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+    sourceSets {
+        main.java.srcDirs += [file("$buildDir/generated/source/kaptKotlin/debug")]
+    }
     buildTypes {
         release {
             minifyEnabled false

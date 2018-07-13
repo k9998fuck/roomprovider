@@ -6,4 +6,5 @@ object AndroidTypeNames {
     val URI = ClassName.get("android.net", "Uri")
     val CONTENT_RESOLVER = ClassName.get("android.content", "ContentResolver")
     val URI_MATCHER = ClassName.get("android.content", "UriMatcher")
+    val CONTENT_VALUES = com.squareup.kotlinpoet.ClassName("android.content", "ContentValues")
 }
