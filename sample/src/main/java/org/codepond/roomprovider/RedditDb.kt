@@ -1,13 +1,14 @@
 package org.codepond.roomprovider
 
-import android.arch.persistence.room.Database
-import android.arch.persistence.room.Room
-import android.arch.persistence.room.RoomDatabase
+import androidx.room.Database
+import androidx.room.Room
+import androidx.room.RoomDatabase
 import android.content.Context
+import org.codepond.App
 
 @Database(
-        entities = [(RedditPost::class)],
-        version = 1,
+        entities = [(RedditPost::class),(RedditUser::class)],
+        version = 2,
         exportSchema = false
 )
 abstract class RedditDb : RoomDatabase() {
@@ -22,7 +23,12 @@ abstract class RedditDb : RoomDatabase() {
                     .fallbackToDestructiveMigration()
                     .build()
         }
+
+        val db by lazy {
+            create(App.application,false)
+        }
     }
 
     abstract fun posts(): RedditPostDao
+    abstract fun users(): RedditUserDao
 }

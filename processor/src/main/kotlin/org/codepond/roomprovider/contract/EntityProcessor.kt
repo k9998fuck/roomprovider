@@ -1,7 +1,7 @@
 package org.codepond.roomprovider.contract
 
-import android.arch.persistence.room.ColumnInfo
-import android.arch.persistence.room.Ignore
+import androidx.room.ColumnInfo
+import androidx.room.Ignore
 import com.google.auto.common.AnnotationMirrors
 import com.google.auto.common.MoreElements
 import com.google.auto.common.MoreTypes
@@ -23,7 +23,7 @@ class EntityProcessor(context: Context,
     fun process(): Entity {
         context.logger.d(element, "Found entity")
         val annotation = MoreElements
-                .getAnnotationMirror(element, android.arch.persistence.room.Entity::class.java)
+                .getAnnotationMirror(element, androidx.room.Entity::class.java)
                 .orNull()
         val tableName = extractAnnotationValue(element, annotation, "tableName")
 

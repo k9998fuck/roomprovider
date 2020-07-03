@@ -14,7 +14,7 @@ class DatabaseProcessor(context: Context,
 ) : ContextAwareProcessor(context, element) {
     fun process(): Database {
         val dbAnnotation = MoreElements
-                .getAnnotationMirror(element, android.arch.persistence.room.Database::class.java)
+                .getAnnotationMirror(element, androidx.room.Database::class.java)
                 .orNull()
         val entities = processEntities(dbAnnotation)
         val databaseName = processDatabaseName()
