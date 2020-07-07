@@ -9,7 +9,10 @@ import android.database.Cursor
 @Dao
 interface RedditPostDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(posts: List<RedditPost>)
+    fun insert(vararg posts: RedditPost)
+
+    @Query("select * from posts")
+    fun queryAll() : Cursor
 
     @Query("SELECT * FROM posts WHERE name = :subreddit")
     fun postsBySubreddit(subreddit: String): Cursor

@@ -1,14 +1,13 @@
 package org.codepond.roomprovider.contract
 
 import com.squareup.javapoet.TypeName
-import com.squareup.kotlinpoet.ClassName
-import com.squareup.kotlinpoet.FileSpec
-import com.squareup.kotlinpoet.FunSpec
-import com.squareup.kotlinpoet.asTypeName
+import com.squareup.kotlinpoet.*
 import org.codepond.roomprovider.Context
 import org.codepond.roomprovider.ext.AndroidTypeNames
 import org.codepond.roomprovider.ext.getPackage
+import org.codepond.roomprovider.ext.isNonNull
 import java.io.File
+import javax.lang.model.element.Modifier
 
 class ExtensionWriter(private val database: Database,
                       private val context: Context) {
@@ -35,7 +34,19 @@ class ExtensionWriter(private val database: Database,
             addStatement("val values = %T()", AndroidTypeNames.CONTENT_VALUES)
             entity.fields.forEach { field ->
                 checkSupportedType(field)
-                addStatement("values.put(\"${field.name}\", ${field.element})")
+                if (!field.type.isPrimitive && !field.type.isBoxedPrimitive && field.type != com.squareup.javapoet.ClassName.get("java.lang", "String")) {
+                    for(typeConverter in database.typeConverters){
+                        for(method in typeConverter.methods){
+                            if(method.parameterTypeName == field.type){
+                                addStatement("values.put(\"${field.name}\", %T().${method.element
+                                        .simpleName}(${field.element}))",typeConverter.element.asType().asTypeName())
+                                break
+                            }
+                        }
+                    }
+                }else{
+                    addStatement("values.put(\"${field.name}\", ${field.element})")
+                }
             }
             addStatement("return values")
             returns(AndroidTypeNames.CONTENT_VALUES)
@@ -63,7 +74,38 @@ class ExtensionWriter(private val database: Database,
                     when(field.type){
                         com.squareup.javapoet.ClassName.get("java.lang", "String") -> "${field.element} = getAsString(\"${field.name}\")"
                         TypeName.OBJECT -> "${field.element} = get(\"${field.name}\")"
-                        else -> "null"
+                        else -> {
+                            var code = ""
+                            for(typeConverter in database.typeConverters){
+                                for(method in typeConverter.methods){
+                                    if(method.returnTypeName == field.type){
+                                        code = CodeBlock.builder().add("${field.element} = %T()" +
+                                                ".${method.element.simpleName}(" +
+                                                "${if(method.parameterTypeName.isPrimitive || method.parameterTypeName.isBoxedPrimitive){
+                                                    when(method.parameterTypeName.unbox()){
+                                                        TypeName.BOOLEAN -> "getAsBoolean"
+                                                        TypeName.BYTE -> "getAsByte"
+                                                        TypeName.SHORT -> "getAsShort"
+                                                        TypeName.INT -> "getAsInteger"
+                                                        TypeName.LONG -> "getAsLong"
+                                                        TypeName.FLOAT -> "getAsFloat"
+                                                        TypeName.DOUBLE -> "getAsDouble"
+                                                        else -> "null"
+                                                    }
+                                                }else{
+                                                    when(method.parameterTypeName){
+                                                        com.squareup.javapoet.ClassName.get("java.lang", "String") -> "getAsString"
+                                                        else -> "null"
+                                                    }
+                                                }}(\"${field.name}\"))${if(field.element.isNonNull()) "!!" else ""}",
+                                                typeConverter.element.asType().asTypeName()
+                                        ).build().toString()
+                                        break
+                                    }
+                                }
+                            }
+                            code
+                        }
                     }
                 } + if(index!=entity.fields.size-1) "," else ""
             }
@@ -75,9 +117,21 @@ class ExtensionWriter(private val database: Database,
     }
 
     private fun checkSupportedType(field: Field) {
-
         if (!field.type.isPrimitive && !field.type.isBoxedPrimitive && field.type != com.squareup.javapoet.ClassName.get("java.lang", "String")) {
-            context.logger.e(field.element, "${field.name} is not supported field type")
+            var supported = false
+            for(typeConverter in database.typeConverters){
+                for(method in typeConverter.methods){
+                    if(method.parameterTypeName == field.type){
+                        context.logger.d(field.element, "${field.name} is supported field type ${method.parameterTypeName}")
+                        supported = true
+                        break
+                    }
+                }
+            }
+            if(!supported){
+                context.logger.e(field.element, "${field.name} is not supported field type")
+            }
         }
     }
+
 }

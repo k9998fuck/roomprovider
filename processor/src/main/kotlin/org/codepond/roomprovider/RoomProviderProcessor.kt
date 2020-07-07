@@ -29,6 +29,7 @@ class RoomProviderProcessor : BasicAnnotationProcessor() {
     class ProcessEntityStep(context: Context) : ContextAwareProcessingStep(context) {
         override fun annotations(): MutableSet<out Class<out Annotation>> {
             return mutableSetOf(androidx.room.Database::class.java,
+                    androidx.room.TypeConverters::class.java,
                     androidx.room.Dao::class.java)
         }
 

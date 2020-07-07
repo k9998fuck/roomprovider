@@ -13,6 +13,17 @@ class DatabaseProcessor(context: Context,
                         element: TypeElement
 ) : ContextAwareProcessor(context, element) {
     fun process(): Database {
+        val typeConvertersAnnotation = MoreElements
+                .getAnnotationMirror(element, androidx.room.TypeConverters::class.java)
+                .orNull()
+        val typeConverters = AnnotationMirrors
+                .getAnnotationValue(typeConvertersAnnotation, "value")
+                .toListOfClassTypes()
+                .map {
+                    TypeConverterProcessor(context, MoreTypes.asTypeElement(it)).process()
+                }
+
+
         val dbAnnotation = MoreElements
                 .getAnnotationMirror(element, androidx.room.Database::class.java)
                 .orNull()
@@ -23,7 +34,7 @@ class DatabaseProcessor(context: Context,
             context.logger.e(element, "Could not resolve database name. Did you annotate an anonymous class?")
         }
 
-        return Database(element, databaseName!!, entities)
+        return Database(element, databaseName!!, entities, typeConverters)
     }
 
     private fun processEntities(dbAnnotation: AnnotationMirror?): List<Entity> {
