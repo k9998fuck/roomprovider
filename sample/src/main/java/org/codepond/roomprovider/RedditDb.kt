@@ -6,6 +6,9 @@ import androidx.room.RoomDatabase
 import android.content.Context
 import androidx.room.TypeConverters
 import org.codepond.App
+import org.codepond.roomprovider.bean.RedditPost
+import org.codepond.roomprovider.bean.RedditUser
+import org.codepond.roomprovider.converter.Converters
 
 @Database(
         entities = [(RedditPost::class),(RedditUser::class)],

@@ -2,6 +2,7 @@ package org.codepond.roomprovider.contract
 
 import androidx.room.ColumnInfo
 import androidx.room.Ignore
+import androidx.room.PrimaryKey
 import com.google.auto.common.AnnotationMirrors
 import com.google.auto.common.MoreElements
 import com.google.auto.common.MoreTypes
@@ -49,7 +50,8 @@ class EntityProcessor(context: Context,
             context.logger.d(field, "Adding field")
             val declaredType = MoreTypes.asDeclared(element.asType())
             val member = context.processingEnv.typeUtils.asMemberOf(declaredType, field)
-            fields.add(Field(field, fieldName, TypeName.get(member)))
+            fields.add(Field(field, fieldName, TypeName.get(member),
+                    MoreElements.getAnnotationMirror(field, PrimaryKey::class.java).isPresent))
         }
         if (fields.size == 0) {
             context.logger.e(element, "Entity class ${element.qualifiedName} does not contains any fields")

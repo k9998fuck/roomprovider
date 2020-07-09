@@ -25,6 +25,15 @@ android {
     dataBinding {
         enabled = true
     }
+    task makeJar(type: Jar) {
+        delete("build/libs/myjar.jar")
+        from("build/tmp/kotlin-classes/debug")
+        from("build/generated/source/kaptKotlin/debug")
+        into("build/libs/")
+        include("classes.jar")
+        rename("classes.jar", "myjar.jar")
+    }
+    makeJar.dependsOn(build)
 }
 
 dependencies {

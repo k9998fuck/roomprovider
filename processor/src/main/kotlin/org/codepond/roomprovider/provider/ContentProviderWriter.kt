@@ -40,7 +40,19 @@ class ContentProviderWriter(private val database: Database,
                                         .addStatement("\$T localSelection",ClassName.get("java.lang", "String"))
                                         .addCode("switch (${database.name.capitalize()}Provider.MATCHER.match(arg0)){\n")
                                         .addCode("case ${database.name.capitalize()}Provider.${entity.name.toUpperCase()}_ITEM:\n")
-                                        .addCode("localSelection = (\$T._ID + \" = \" + arg0.getLastPathSegment()) + (arg2==null ? \"\" : arg2);\n",AndroidTypeNames.BASE_COLUMNS)
+                                        .apply {
+                                            var add = false
+                                            for (field in entity.fields){
+                                                if(field.primaryKey){
+                                                    addCode("localSelection = (\"${field.name} = \" + arg0.getLastPathSegment()) + (arg2==null || arg2.trim().isEmpty() ? \"\" : \" AND \"+arg2);\n",AndroidTypeNames.BASE_COLUMNS)
+                                                    add = true
+                                                    break
+                                                }
+                                            }
+                                            if(!add){
+                                                addCode("localSelection = (\$T._ID + \" = \" + arg0.getLastPathSegment()) + (arg2==null || arg2.trim().isEmpty() ? \"\" : \" AND \"+arg2);\n",AndroidTypeNames.BASE_COLUMNS)
+                                            }
+                                        }
                                         .addCode("break;\n")
                                         .addCode("default:\n")
                                         .addCode("localSelection = arg2;\n")

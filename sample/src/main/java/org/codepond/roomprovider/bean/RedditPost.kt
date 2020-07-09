@@ -1,4 +1,4 @@
-package org.codepond.roomprovider
+package org.codepond.roomprovider.bean
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

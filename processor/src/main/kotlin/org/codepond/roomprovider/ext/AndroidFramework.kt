@@ -6,11 +6,15 @@ object AndroidTypeNames {
     val URI = ClassName.get("android.net", "Uri")
     val CONTENT_RESOLVER = ClassName.get("android.content", "ContentResolver")
     val URI_MATCHER = ClassName.get("android.content", "UriMatcher")
-    val CONTENT_VALUES = com.squareup.kotlinpoet.ClassName("android.content", "ContentValues")
+    val CONTENT_VALUES = ClassName.get("android.content", "ContentValues")
     val CONTENT_PROVIDER = ClassName.get("android.content", "ContentProvider")
     val BASE_COLUMNS = ClassName.get("android.provider", "BaseColumns")
     val SUPPORT_SQLITE_QUERY_BUILDER = ClassName.get("androidx.sqlite.db", "SupportSQLiteQueryBuilder")
     val SUPPORT_SQLITE_QUERY = ClassName.get("androidx.sqlite.db", "SupportSQLiteQuery")
     val CURSOR = ClassName.get("android.database", "Cursor")
 
+}
+
+fun ClassName.toClassName() : com.squareup.kotlinpoet.ClassName{
+    return com.squareup.kotlinpoet.ClassName(packageName(), simpleName())
 }

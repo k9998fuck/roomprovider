@@ -62,7 +62,7 @@ class ContractWriter(private val database: Database,
                 val fieldName = CaseFormat.UPPER_CAMEL.to(CaseFormat.UPPER_UNDERSCORE, it.name)
                 columns.add(fieldName)
                 addField(FieldSpec.builder(String::class.java, fieldName, *publicStaticFinalModifier)
-                        .initializer("\$S", it)
+                        .initializer("\$S", it.name)
                         .build())
             }
 

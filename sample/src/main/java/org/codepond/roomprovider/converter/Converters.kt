@@ -1,4 +1,4 @@
-package org.codepond.roomprovider
+package org.codepond.roomprovider.converter
 
 import androidx.room.TypeConverter
 import java.text.SimpleDateFormat
