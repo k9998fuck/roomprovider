@@ -7,6 +7,8 @@ import android.util.Log
 import org.codepond.roomprovider.*
 import org.codepond.roomprovider.bean.RedditUser
 import org.codepond.roomprovider.bean.toRedditUser
+import org.codepond.roomprovider.db.RedditContract
+import org.codepond.roomprovider.db.RedditDb
 import java.util.*
 
 class MainActivity : Activity() {

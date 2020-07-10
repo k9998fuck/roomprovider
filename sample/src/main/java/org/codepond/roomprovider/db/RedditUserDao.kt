@@ -1,4 +1,4 @@
-package org.codepond.roomprovider
+package org.codepond.roomprovider.db
 
 import android.database.Cursor
 import androidx.room.Dao

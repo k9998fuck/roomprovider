@@ -25,15 +25,49 @@ android {
     dataBinding {
         enabled = true
     }
+
     task makeJar(type: Jar) {
         delete("build/libs/myjar.jar")
-        from("build/tmp/kotlin-classes/debug")
-        from("build/generated/source/kaptKotlin/debug")
+//    from {
+//        String[] include = [
+//                "kotlin-runtime-${kotlin_version}.jar",
+//                "kotlin-stdlib-${kotlin_version}.jar"
+//        ]
+//        configurations.compile
+//                .findAll { include.contains(it.name) }
+//                .collect { it.isDirectory() ? it : zipTree(it) }
+//    }
+//        from("build/tmp/kotlin-classes/debug"){
+//            include 'org/codepond/roomprovider/bean/*'
+//            include 'org/codepond/roomprovider/converter/*'
+//        }
+        from("build/intermediates/javac/debug/classes"){
+            include 'org/codepond/roomprovider/bean/*'
+            include 'org/codepond/roomprovider/converter/*'
+        }
+//        from("build/generated/source/kapt/debug"){
+//            include 'org/codepond/roomprovider/bean/*'
+//            include 'org/codepond/roomprovider/db/*'
+//        }
+//        from("build/generated/source/kaptKotlin/debug"){
+//            include 'org/codepond/roomprovider/bean/*'
+//            include 'org/codepond/roomprovider/db/*'
+//        }
+        //去除路径集下部分的资源
+//    exclude "**/R.class"
+//    exclude "**/R\$*.class"
+//    //只导入资源路径集下的部分资源
+//    include "org/roomprovider/bean/RedditPost.class"
         into("build/libs/")
         include("classes.jar")
         rename("classes.jar", "myjar.jar")
     }
-    makeJar.dependsOn(build)
+//    makeJar.dependsOn(build)
+
+    tasks.withType(JavaCompile) {
+        compileTask -> compileTask.dependsOn(makeJar)
+    }
+
 }
 
 dependencies {
@@ -44,3 +78,6 @@ dependencies {
     implementation deps.room.runtime
     implementation deps.kotlin.stdlib
 }
+
+
+

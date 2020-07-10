@@ -31,6 +31,8 @@ class ContentProviderWriter(private val database: Database,
 //                        .build())
                 val classElement = context.processingEnv.elementUtils.getTypeElement(AndroidTypeNames.CONTENT_PROVIDER.canonicalName())
                 val methods = ElementFilter.methodsIn(classElement.enclosedElements)
+                val databaseProvider = ClassName.get(database.element.getPackage(context), "${database.name.capitalize()}Provider")
+                val databaseContract = ClassName.get(database.element.getPackage(context), "${database.name.capitalize()}Contract")
                 methods.forEach {
                     when(it.simpleName.toString()){
                         "onCreate" -> addMethod(MethodSpec.overriding(it).addStatement("return true").build())
@@ -38,8 +40,8 @@ class ContentProviderWriter(private val database: Database,
                             if(it.modifiers.contains(Modifier.ABSTRACT)){
                                 addMethod(MethodSpec.overriding(it)
                                         .addStatement("\$T localSelection",ClassName.get("java.lang", "String"))
-                                        .addCode("switch (${database.name.capitalize()}Provider.MATCHER.match(arg0)){\n")
-                                        .addCode("case ${database.name.capitalize()}Provider.${entity.name.toUpperCase()}_ITEM:\n")
+                                        .addCode("switch (\$T.MATCHER.match(arg0)){\n",databaseProvider)
+                                        .addCode("case \$T.${entity.name.toUpperCase()}_ITEM:\n",databaseProvider)
                                         .apply {
                                             var add = false
                                             for (field in entity.fields){
@@ -66,19 +68,20 @@ class ContentProviderWriter(private val database: Database,
                                         .addStatement("queryBuilder.selection(localSelection,arg3)")
                                         .addStatement("queryBuilder.orderBy(arg4)")
                                         .addStatement("\$T query = queryBuilder.create()",AndroidTypeNames.SUPPORT_SQLITE_QUERY)
-                                        .addStatement("\$T c = ${database.element.simpleName}.Companion.getDb().query(query)",AndroidTypeNames.CURSOR)
+                                        .addStatement("\$T c = \$T.Companion.getDb().query(query)",
+                                                AndroidTypeNames.CURSOR,ClassName.get(database.element.getPackage(context), "${database.element.simpleName}"))
                                         .addStatement("return c").build())
                             }
                         }
                         "getType" -> {
                             addMethod(MethodSpec.overriding(it)
                                     .addStatement("\$T value",ClassName.get("java.lang", "String"))
-                                    .addCode("switch (${database.name.capitalize()}Provider.MATCHER.match(arg0)){\n")
-                                    .addCode("case ${database.name.capitalize()}Provider.${entity.name.toUpperCase()}_ITEM:\n")
-                                    .addCode("value = ${database.name.capitalize()}Contract.${entity.name.capitalize()}.CONTENT_ITEM_TYPE;\n")
+                                    .addCode("switch (\$T.MATCHER.match(arg0)){\n",databaseProvider)
+                                    .addCode("case \$T.${entity.name.toUpperCase()}_ITEM:\n",databaseProvider)
+                                    .addCode("value = \$T.${entity.name.capitalize()}.CONTENT_ITEM_TYPE;\n",databaseContract)
                                     .addCode("break;\n")
                                     .addCode("default:\n")
-                                    .addCode("value = ${database.name.capitalize()}Contract.${entity.name.capitalize()}.CONTENT_TYPE;\n")
+                                    .addCode("value = \$T.${entity.name.capitalize()}.CONTENT_TYPE;\n",databaseContract)
                                     .addCode("break;\n")
                                     .addCode("}\n")
                                     .addStatement("return value").build())
@@ -93,7 +96,7 @@ class ContentProviderWriter(private val database: Database,
 
             }
 
-            JavaFile.builder(database.element.getPackage(context), provider.build()).build().writeTo(context.processingEnv.filer)
+            JavaFile.builder(entity.element.getPackage(context), provider.build()).build().writeTo(context.processingEnv.filer)
         }
 
 

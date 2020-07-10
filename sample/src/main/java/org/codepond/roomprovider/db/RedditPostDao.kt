@@ -1,4 +1,4 @@
-package org.codepond.roomprovider
+package org.codepond.roomprovider.db
 
 import androidx.room.Dao
 import androidx.room.Insert

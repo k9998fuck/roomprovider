@@ -1,4 +1,4 @@
-package org.codepond.roomprovider
+package org.codepond.roomprovider.db
 
 import androidx.room.Database
 import androidx.room.Room
@@ -30,7 +30,8 @@ abstract class RedditDb : RoomDatabase() {
         }
 
         val db by lazy {
-            create(App.application,false)
+            create(
+                    App.application, false)
         }
     }
 
