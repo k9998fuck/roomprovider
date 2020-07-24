@@ -19,13 +19,13 @@ xmlns:android="http://schemas.android.com/apk/res/android">
         </intent-filter>
     </activity>
     <provider
-        android:authorities="org.codepond.roomprovider"
-        android:name=".UsersContentProvider"
+        android:authorities="org.codepond.roomprovider.db"
+        android:name=".bean.UsersContentProvider"
         android:exported="true"
         android:syncable="true" />
     <provider
-        android:authorities="org.codepond.roomprovider"
-        android:name=".PostsContentProvider"
+        android:authorities="org.codepond.roomprovider.db"
+        android:name=".bean.PostsContentProvider"
         android:exported="true"
         android:syncable="true" />
 </application>
